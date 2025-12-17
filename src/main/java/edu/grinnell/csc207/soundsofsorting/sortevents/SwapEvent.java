@@ -9,6 +9,12 @@ public class SwapEvent<T> implements SortEvent<T> {
     private final int i;
     private final int j;
 
+    /**
+     * Constructs a swap event with the given indices.
+     *
+     * @param i an integer
+     * @param j an integer
+     */
     public SwapEvent(int i, int j) {
         this.i = i;
         this.j = j;

@@ -10,6 +10,12 @@ public class CompareEvent<T> implements SortEvent<T> {
     private final int i;
     private final int j;
 
+    /**
+     * Constructs a compare event with the given indices.
+     *
+     * @param i an integer
+     * @param j an integer
+     */
     public CompareEvent(int i, int j) {
         this.i = i;
         this.j = j;

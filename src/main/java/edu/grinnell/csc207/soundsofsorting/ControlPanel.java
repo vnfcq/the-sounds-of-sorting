@@ -11,6 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import edu.grinnell.csc207.soundsofsorting.sortevents.SortEvent;
+import edu.grinnell.csc207.soundsofsorting.sortevents.CompareEvent;
 import edu.grinnell.csc207.soundsofsorting.sorts.Sorts;
 
 /**
@@ -147,7 +148,7 @@ public class ControlPanel extends JPanel {
                         generateEvents((String) sorts.getSelectedItem(), copy);
                 // 2. Add in the compare events to the end of the list
                 for (int i = 0; i < original.length - 1; i++) {
-                    events.add(new edu.grinnell.csc207.soundsofsorting.sortevents.CompareEvent<>(i, i + 1));
+                    events.add(new CompareEvent<>(i, i + 1));
                 }
 
                 // NOTE: The Timer class repetitively invokes a method at a

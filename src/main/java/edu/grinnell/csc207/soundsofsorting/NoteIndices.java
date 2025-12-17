@@ -16,6 +16,11 @@ public class NoteIndices {
     private Integer[] notes;
     private boolean[] highlighted;
 
+    /**
+     * Constructs a new NoteIndices object with indices for a scale of size {@code n}.
+     *
+     * @param n an integer
+     */
     public NoteIndices(int n) {
         initializeAndShuffle(n);
     }
