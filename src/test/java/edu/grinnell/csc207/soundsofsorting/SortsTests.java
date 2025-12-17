@@ -1,11 +1,13 @@
 package edu.grinnell.csc207.soundsofsorting;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-import java.util.function.Consumer;
+import java.util.Arrays;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
+import edu.grinnell.csc207.soundsofsorting.sortevents.SortEvent;
 import edu.grinnell.csc207.soundsofsorting.sorts.Sorts;
 
 public class SortsTests {
@@ -23,19 +25,23 @@ public class SortsTests {
         return true;
     }
 
-    public static Integer[] makeTestArray() {
-        return new Integer[] {
-            3, 7, 9, 1, 2,
-            18, 16, 15, 19, 8,
-            14, 12, 5, 13, 4,
-            6, 0, 17, 11, 10
+    public void testSort(Function<Integer[], java.util.List<SortEvent<Integer>>> sort) {
+        Integer[][] cases = new Integer[][] {
+                new Integer[] {},
+                new Integer[] {1},
+                new Integer[] {1, 2, 3, 4, 5},
+                new Integer[] {5, 4, 3, 2, 1},
+                new Integer[] {1, 2, 3, 2, 1}
         };
-    }
 
-    public void testSort(Consumer<Integer[]> func) {
-        Integer[] arr = makeTestArray();
-        func.accept(arr);
-        assertTrue(sorted(arr));
+        for (Integer[] c : cases) {
+            Integer[] arr = Arrays.copyOf(c, c.length);
+            Integer[] expected = Arrays.copyOf(c, c.length);
+            Arrays.sort(expected);
+
+            sort.apply(arr); // ignore events for Part 1
+            assertArrayEquals(expected, arr);
+        }
     }
 
     @Test
@@ -61,5 +67,10 @@ public class SortsTests {
     @Test
     public void testQuickSort() {
         testSort(Sorts::quickSort);
+    }
+
+    @Test
+    public void testCocktailShakerSort() {
+        testSort(Sorts::cocktailShakerSort);
     }
 }
