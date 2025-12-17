@@ -47,6 +47,8 @@ public class ControlPanel extends JPanel {
                 return Sorts.insertionSort(arr);
             case "Bubble":
                 return Sorts.bubbleSort(arr);
+            case "Cocktail Shaker":
+                return Sorts.cocktailShakerSort(arr);
             case "Merge":
                 return Sorts.mergeSort(arr);
             case("Quick"):
@@ -79,9 +81,9 @@ public class ControlPanel extends JPanel {
     private static int toPeriod(int fps) {
         return 1000 / fps;
     }
-    
+    private final NoteIndices notes;
     private Scale scale;
-    private ArrayPanel panel;
+    private final ArrayPanel panel;
     private boolean isSorting;
     
     /**
@@ -90,15 +92,17 @@ public class ControlPanel extends JPanel {
      * @param panel the ArrayPanel that this panel renders to
      */
     public ControlPanel(NoteIndices notes, ArrayPanel panel) {
+        this.notes = notes;
         scale = new Scale(bMinorPentatonicValues);
         notes.initializeAndShuffle(scale.size());
         this.panel = panel;
-        
+
         ///// The sort selection combo box /////
         JComboBox<String> sorts = new JComboBox<>(new String[] {
             "Selection",
             "Insertion",
             "Bubble",
+            "Cocktail Shaker",
             "Merge",
             "Quick"
         });
@@ -134,12 +138,18 @@ public class ControlPanel extends JPanel {
                     return;
                 }
                 isSorting = true;
-                
-                // TODO: fill me in!
+
+                Integer[] original = notes.getNotes();
+                Integer[] copy = java.util.Arrays.copyOf(original, original.length);
+
                 // 1. Create the sorting events list
+                List<SortEvent<Integer>> events =
+                        generateEvents((String) sorts.getSelectedItem(), copy);
                 // 2. Add in the compare events to the end of the list
-                List<SortEvent<Integer>> events = new java.util.LinkedList<>();
-                
+                for (int i = 0; i < original.length - 1; i++) {
+                    events.add(new edu.grinnell.csc207.soundsofsorting.sortevents.CompareEvent<>(i, i + 1));
+                }
+
                 // NOTE: The Timer class repetitively invokes a method at a
                 //       fixed interval.  Here we are specifying that method
                 //       by creating an _anonymous subclass_ of the TimeTask
@@ -153,11 +163,20 @@ public class ControlPanel extends JPanel {
                     public void run() {
                         if (index < events.size()) {
                             SortEvent<Integer> e = events.get(index++);
-                            // TODO: fill me in!
                             // 1. Apply the next sort event.
+                            e.apply(notes.getNotes());
+                            // 2. Clear those previously highlighted
+                            notes.clearAllHighlighted();
                             // 3. Play the corresponding notes denoted by the
                             //    affected indices logged in the event.
+                            for (int idx : e.getAffectedIndices()) {
+                                int scaleIndex = notes.getNotes()[idx];
+                                scale.playNote(scaleIndex, e.isEmphasized());
+                            }
                             // 4. Highlight those affected indices.
+                            for (int idx : e.getAffectedIndices()) {
+                                notes.highlightNote(idx);
+                            }
                             panel.repaint();
                         } else {
                             this.cancel();
